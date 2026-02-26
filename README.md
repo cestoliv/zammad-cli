@@ -5,7 +5,7 @@ TypeScript CLI for [Zammad](https://zammad.org) helpdesk, built with Bun.
 ## Install
 
 ```bash
-bun install -g github:your-user/zammad-cli
+bun install -g github:cestoliv/zammad-cli
 ```
 
 ## Authentication

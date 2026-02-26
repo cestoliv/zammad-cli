@@ -2,6 +2,11 @@
   "name": "zammad-cli",
   "version": "0.1.0",
   "description": "CLI for Zammad helpdesk",
+  "author": {
+    "name": "Olivier Cartier",
+    "email": "me@cestoliv.com",
+    "url": "https://cestoliv.com"
+  },
   "type": "module",
   "bin": {
     "zammad": "./src/cli.ts"
