@@ -1,10 +1,12 @@
 ---
 name: zammad
 description: Manage Zammad helpdesk tickets. Use when the user asks about support tickets, customer issues, helpdesk tasks, or wants to search, view, reply to, or close tickets.
-compatibility: Requires bun and network access to a Zammad instance.
+allowed-tools: Bash(zammad *)
 metadata:
-  author: zammad-cli
-  version: "0.1.0"
+  clawdbot:
+    emoji: "💁"
+    requires:
+      env: ["ZAMMAD_URL", "ZAMMAD_TOKEN"]
 ---
 
 # Zammad CLI
