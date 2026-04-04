@@ -50,9 +50,11 @@ export function registerReplyCommand(program: Command): void {
 					body = result;
 				}
 
+				const htmlBody = body.replace(/\n/g, "<br>\n");
+
 				const article = await client.createArticle({
 					ticket_id: ticketId,
-					body,
+					body: htmlBody,
 					subject: opts.subject,
 					type: opts.type,
 					internal: opts.internal,

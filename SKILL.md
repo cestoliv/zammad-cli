@@ -78,6 +78,14 @@ zammad tickets reply 42 "Update on your request" -t email --to user@example.com
 
 # Internal note
 zammad tickets reply 42 "Waiting on vendor response" -i
+
+# Multi-line body — quoted newlines (preferred)
+zammad tickets reply 42 "Hello,
+Your issue has been resolved.
+Best regards" -t email -s "Re: VPN issue"
+
+# Or with explicit \n
+zammad tickets reply 42 $'Hello,\nYour issue has been resolved.\nBest regards' -t email -s "Re: VPN issue"
 ```
 
 ### Close a ticket
