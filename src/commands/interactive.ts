@@ -68,7 +68,7 @@ export function registerInteractiveCommand(program: Command): void {
 				if (action === "reply") {
 					const message = await clack.text({
 						message: "Your reply:",
-						validate: (v) => (v.trim() ? undefined : "Cannot be empty"),
+						validate: (v) => (v?.trim() ? undefined : "Cannot be empty"),
 					});
 					if (!clack.isCancel(message)) {
 						await client.createArticle({

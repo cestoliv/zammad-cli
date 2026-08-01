@@ -32,3 +32,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# local Claude Code state and linked worktrees (a nested worktree carries its
+# own biome.json, which breaks `bun run lint` at the repo root)
+.claude/worktrees
+.claude/settings.local.json

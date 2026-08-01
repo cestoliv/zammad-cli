@@ -27,9 +27,7 @@ export function registerReplyCommand(program: Command): void {
 					to = ticket.customer;
 					if (!to) {
 						console.error(
-							pc.red(
-								"Could not determine recipient from ticket. Use --to to specify one.",
-							),
+							pc.red("Could not determine recipient from ticket. Use --to to specify one."),
 						);
 						process.exit(1);
 					}
