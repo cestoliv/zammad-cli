@@ -1,8 +1,26 @@
-import { afterEach, describe, expect, it } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { clearConfig, getConfig, hasConfig, saveConfig } from "../src/config.ts";
 
 describe("config", () => {
 	const originalEnv = { ...process.env };
+	let storeDir: string;
+
+	// These tests call saveConfig/clearConfig for real, so the store must be
+	// redirected at a temp directory — otherwise they destroy the developer's
+	// actual Zammad credentials.
+	beforeAll(() => {
+		storeDir = mkdtempSync(join(tmpdir(), "zammad-cli-config-"));
+		process.env.ZAMMAD_CONFIG_DIR = storeDir;
+	});
+
+	afterAll(() => {
+		if (originalEnv.ZAMMAD_CONFIG_DIR === undefined) delete process.env.ZAMMAD_CONFIG_DIR;
+		else process.env.ZAMMAD_CONFIG_DIR = originalEnv.ZAMMAD_CONFIG_DIR;
+		rmSync(storeDir, { recursive: true, force: true });
+	});
 
 	afterEach(() => {
 		// Restore env vars
@@ -10,6 +28,7 @@ describe("config", () => {
 		process.env.ZAMMAD_TOKEN = originalEnv.ZAMMAD_TOKEN;
 		if (!originalEnv.ZAMMAD_URL) delete process.env.ZAMMAD_URL;
 		if (!originalEnv.ZAMMAD_TOKEN) delete process.env.ZAMMAD_TOKEN;
+		process.env.ZAMMAD_CONFIG_DIR = storeDir;
 	});
 
 	describe("environment variable precedence", () => {

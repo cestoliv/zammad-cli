@@ -42,7 +42,7 @@ describe("ZammadClient", () => {
 			expect(callUrl).toContain("page=1");
 			expect(callUrl).toContain("per_page=10");
 			expect(result).toHaveLength(1);
-			expect(result[0].id).toBe(1);
+			expect(result[0]?.id).toBe(1);
 		});
 	});
 
