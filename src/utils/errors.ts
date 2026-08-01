@@ -11,6 +11,13 @@ export class ZammadApiError extends Error {
 	}
 }
 
+export class InputError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = "InputError";
+	}
+}
+
 export class ConfigError extends Error {
 	constructor(message: string) {
 		super(message);

@@ -45,6 +45,28 @@ zammad open                        # shortcut for open tickets
 zammad new                         # shortcut for new tickets
 ```
 
+Results are ordered **newest first**, so the most recent tickets stay visible
+even when a page size truncates the list. `--per-page` is not limited by
+Zammad's server-side cap of 100 — larger values are satisfied by fetching
+several pages — and the footer reports the true total, e.g.
+`Showing 25 of 137 tickets (page 1 of 6)`.
+
+`--state` prefers Zammad's search backend. If search returns nothing (it needs
+Elasticsearch, and returns zero results for *every* query when it is down), the
+filter is re-applied client-side against the index endpoint, which does not
+depend on Elasticsearch. When that fallback actually returns rows, a notice is
+printed to stderr; when it confirms the state is genuinely empty, no notice is
+printed because nothing was hidden.
+
+`--page` and `--per-page` reject anything that is not a positive integer rather
+than silently treating it as zero results.
+
+**Limits.** Listing pages through the API at 100 tickets per request, up to 50
+requests (5000 tickets). Beyond that the list is incomplete, and a warning is
+printed to stderr — believe the warning rather than the totals. Because the
+whole matching set is fetched before sorting and slicing, every `list`
+invocation costs at least one request per 100 tickets, even for `--per-page 25`.
+
 ### Search tickets
 
 Uses Zammad's Elasticsearch query syntax.
