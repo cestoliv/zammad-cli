@@ -4,7 +4,7 @@ import pc from "picocolors";
 import { ZammadClient } from "../client.ts";
 import { getConfig } from "../config.ts";
 import { formatArticle, formatTicketDetail } from "../format.ts";
-import { fetchAllTickets } from "../utils/pagination.ts";
+import { fetchAllTickets, newestFirst } from "../utils/pagination.ts";
 
 export function registerInteractiveCommand(program: Command): void {
 	program
@@ -20,8 +20,15 @@ export function registerInteractiveCommand(program: Command): void {
 
 				const spinner = clack.spinner();
 				spinner.start("Loading tickets…");
-				const tickets = await fetchAllTickets(client, 100, 10);
-				spinner.stop(`Loaded ${tickets.length} tickets`);
+				const { tickets: fetched, truncated } = await fetchAllTickets(client, 10);
+				// Newest first, matching `tickets list` — the newest ticket is the
+				// one most likely to need triaging, so it belongs at the top.
+				const tickets = newestFirst(fetched);
+				spinner.stop(
+					truncated
+						? `Loaded ${tickets.length} tickets (list is incomplete)`
+						: `Loaded ${tickets.length} tickets`,
+				);
 
 				const ticketOptions = tickets.map((t) => ({
 					value: t.id,

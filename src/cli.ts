@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import { Command } from "commander";
+import pkg from "../package.json" with { type: "json" };
 import { registerAuthCommands } from "./commands/auth.ts";
 import { registerCloseCommand } from "./commands/close.ts";
 import { registerInteractiveCommand } from "./commands/interactive.ts";
@@ -11,7 +12,8 @@ import { registerShowCommand } from "./commands/show.ts";
 
 const program = new Command();
 
-program.name("zammad").description("Zammad helpdesk CLI").version("0.1.0");
+// Sourced from package.json so `--version` cannot drift from the released version.
+program.name("zammad").description("Zammad helpdesk CLI").version(pkg.version);
 
 // ── Auth (top-level group) ──
 registerAuthCommands(program);
