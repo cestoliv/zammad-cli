@@ -4,6 +4,7 @@ import { Command } from "commander";
 import pkg from "../package.json" with { type: "json" };
 import { registerAuthCommands } from "./commands/auth.ts";
 import { registerCloseCommand } from "./commands/close.ts";
+import { registerCreateCommand } from "./commands/create.ts";
 import { registerInteractiveCommand } from "./commands/interactive.ts";
 import { registerListCommand } from "./commands/list.ts";
 import { registerReplyCommand } from "./commands/reply.ts";
@@ -21,6 +22,7 @@ registerAuthCommands(program);
 // ── Tickets (resource subcommand group) ──
 const tickets = program.command("tickets").alias("t").description("Manage tickets");
 
+registerCreateCommand(tickets);
 registerListCommand(tickets);
 registerSearchCommand(tickets);
 registerShowCommand(tickets);

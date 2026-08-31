@@ -1,5 +1,6 @@
 import type {
 	CreateArticleParams,
+	CreateTicketParams,
 	UpdateTicketParams,
 	ZammadArticle,
 	ZammadConfig,
@@ -66,6 +67,13 @@ export class ZammadClient {
 			expand: "true",
 		});
 		return this.request<ZammadTicket[]>(`/api/v1/tickets/search?${params}`);
+	}
+
+	async createTicket(params: CreateTicketParams): Promise<ZammadTicket> {
+		return this.request<ZammadTicket>("/api/v1/tickets", {
+			method: "POST",
+			body: JSON.stringify(params),
+		});
 	}
 
 	async updateTicket(id: number, params: UpdateTicketParams): Promise<ZammadTicket> {

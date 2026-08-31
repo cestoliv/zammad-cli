@@ -4,6 +4,7 @@ import pc from "picocolors";
 import { ZammadClient } from "../client.ts";
 import { getConfig } from "../config.ts";
 import { handleError } from "../utils/errors.ts";
+import { toHtmlBody } from "../utils/parse.ts";
 
 export function registerReplyCommand(program: Command): void {
 	program
@@ -48,7 +49,7 @@ export function registerReplyCommand(program: Command): void {
 					body = result;
 				}
 
-				const htmlBody = body.replace(/\n/g, "<br>\n");
+				const htmlBody = toHtmlBody(body);
 
 				const article = await client.createArticle({
 					ticket_id: ticketId,
