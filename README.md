@@ -32,6 +32,7 @@ Environment variables take precedence over stored config.
 | `zammad auth login` | Configure credentials interactively |
 | `zammad auth status` | Show current auth status |
 | `zammad auth logout` | Remove stored credentials |
+| `zammad tickets create` | Create a ticket for a customer (`-t`, `-c`) |
 | `zammad tickets list` | List tickets (`-s open`, `-p 2`, `-n 10`) |
 | `zammad tickets search <query>` | Search with Elasticsearch syntax |
 | `zammad tickets show <id>` | Show ticket details and conversation |
@@ -58,6 +59,22 @@ zammad tickets list -s open
 ```bash
 zammad tickets search 'title:"Server migration*" AND (state.name:open OR state.name:new)'
 ```
+
+**Create a ticket for a customer:**
+
+```bash
+zammad tickets create \
+  -t "[Exercise Request] Toe To Bar" \
+  -c customer@example.com \
+  "Bonjour, pouvez-vous ajouter l'exercice Toe To Bar ?"
+```
+
+Defaults match what the in-app support form produces: group `Users`, state
+`new`, article type `web`, sender `Customer`, publicly visible. Override any
+of them with `-g`, `-s`, `--type`, `--sender`, and `-i`.
+
+Zammad sends the customer its usual auto-acknowledgement email, so check the
+address before you run this.
 
 **Reply by email:**
 

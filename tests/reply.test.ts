@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { Command } from "commander";
 import { ZammadClient } from "../src/client.ts";
 import { registerReplyCommand } from "../src/commands/reply.ts";

@@ -132,6 +132,21 @@ export interface CreateArticleParams {
 	time_unit?: string;
 }
 
+export interface CreateTicketParams {
+	title: string;
+	group: string;
+	customer: string;
+	state?: string;
+	article: {
+		subject?: string;
+		body: string;
+		type?: "note" | "email" | "phone" | "web";
+		sender?: "Agent" | "Customer" | "System";
+		internal?: boolean;
+		content_type?: "text/plain" | "text/html";
+	};
+}
+
 export interface UpdateTicketParams {
 	title?: string;
 	group?: string;

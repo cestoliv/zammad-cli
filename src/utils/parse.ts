@@ -19,3 +19,14 @@ export function parsePositiveInt(raw: string, flag: string): number {
 	if (!Number.isSafeInteger(value) || value < 1) throw invalid;
 	return value;
 }
+
+/**
+ * Convert a plain-text body to the HTML Zammad stores.
+ *
+ * Zammad renders article bodies as HTML, so a newline typed at the shell
+ * disappears unless it becomes a <br>. Shared by `reply` and `create` so both
+ * commands treat multi-line input the same way.
+ */
+export function toHtmlBody(body: string): string {
+	return body.replace(/\n/g, "<br>\n");
+}

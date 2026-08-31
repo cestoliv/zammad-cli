@@ -79,6 +79,26 @@ zammad tickets search 'customer.email:jane@example.com'
 zammad tickets search 'title:"Onboarding*" AND (state.name:open OR state.name:new)'
 ```
 
+### Create a ticket
+
+```bash
+zammad tickets create \
+  -t "[Exercise Request] Toe To Bar" \
+  -c customer@example.com \
+  "Bonjour, pouvez-vous ajouter l'exercice Toe To Bar ?"
+
+# Override defaults
+zammad tickets create -t "T" -c customer@example.com -g Support -s open --type note --sender Agent -i "Internal draft"
+```
+
+Defaults match what the in-app support form produces: group `Users`, state
+`new`, article type `web`, sender `Customer`, publicly visible. The group name
+is not validated client-side, so a wrong `-g` returns a Zammad API error.
+
+Zammad's own trigger sends an auto-acknowledgement email to the customer, the
+same as for a form submission. The customer learns a ticket exists in their
+name, so confirm the address before you run this.
+
 ### View ticket details
 
 ```bash
