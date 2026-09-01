@@ -25,7 +25,16 @@ export class ConfigError extends Error {
 	}
 }
 
-export function handleError(error: unknown): never {
+/** Zammad answers 422 with this detail when a ticket names an unknown customer. */
+export function isCustomerLookupError(error: unknown): boolean {
+	return (
+		error instanceof ZammadApiError &&
+		error.status === 422 &&
+		error.detail.includes("No lookup value found for 'customer'")
+	);
+}
+
+export function handleError(error: unknown, hint?: string): never {
 	if (error instanceof ZammadApiError) {
 		if (error.status === 401) {
 			console.error(pc.red("Authentication failed. Run `zammad auth login` to reconfigure."));
@@ -43,5 +52,6 @@ export function handleError(error: unknown): never {
 	} else {
 		console.error(pc.red("An unexpected error occurred."));
 	}
+	if (hint) console.error(pc.dim(`  ${hint}`));
 	process.exit(1);
 }

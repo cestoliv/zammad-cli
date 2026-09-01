@@ -147,6 +147,13 @@ export interface CreateTicketParams {
 	};
 }
 
+export interface CreateUserParams {
+	email: string;
+	firstname: string;
+	lastname: string;
+	roles: string[];
+}
+
 export interface UpdateTicketParams {
 	title?: string;
 	group?: string;

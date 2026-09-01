@@ -3,7 +3,7 @@ import type { Command } from "commander";
 import pc from "picocolors";
 import { ZammadClient } from "../client.ts";
 import { getConfig } from "../config.ts";
-import { handleError, InputError } from "../utils/errors.ts";
+import { handleError, InputError, isCustomerLookupError } from "../utils/errors.ts";
 import { toHtmlBody } from "../utils/parse.ts";
 
 const ARTICLE_TYPES = ["note", "email", "phone", "web"] as const;
@@ -16,6 +16,11 @@ export function registerCreateCommand(program: Command): void {
 		.description("Create a ticket on behalf of a customer")
 		.option("-t, --title <title>", "Ticket title (required)")
 		.option("-c, --customer <email>", "Customer email address (required)")
+		.option("--create-customer", "Create the customer when the email is unknown to Zammad", false)
+		.option(
+			"--customer-name <name>",
+			"Full name of the customer to create (requires --create-customer)",
+		)
 		.option("-g, --group <name>", "Target group", "Users")
 		.option("-s, --state <state>", "Initial state", "new")
 		.option("--type <type>", "Article type: note, email, phone, web", "web")
@@ -51,6 +56,15 @@ export function registerCreateCommand(program: Command): void {
 					);
 				}
 
+				if (opts.createCustomer && (!opts.customerName || opts.customerName.trim().length === 0)) {
+					throw new InputError(
+						"Missing required option --customer-name when using --create-customer.",
+					);
+				}
+				if (opts.customerName && !opts.createCustomer) {
+					throw new InputError("--customer-name requires --create-customer.");
+				}
+
 				let body = message;
 				if (message === undefined) {
 					const result = await clack.text({
@@ -69,7 +83,7 @@ export function registerCreateCommand(program: Command): void {
 					throw new InputError("Message cannot be empty.");
 				}
 
-				const ticket = await client.createTicket({
+				const ticketParams = {
 					title,
 					group: opts.group,
 					customer,
@@ -80,14 +94,47 @@ export function registerCreateCommand(program: Command): void {
 						type: opts.type,
 						sender: opts.sender,
 						internal: opts.internal,
-						content_type: "text/html",
+						content_type: "text/html" as const,
 					},
-				});
+				};
 
+				let createdCustomerId: number | undefined;
+				let ticket: Awaited<ReturnType<typeof client.createTicket>>;
+				try {
+					ticket = await client.createTicket(ticketParams);
+				} catch (err) {
+					if (!isCustomerLookupError(err) || !opts.createCustomer) {
+						throw err;
+					}
+
+					const trimmedName = opts.customerName.trim();
+					const spaceIdx = trimmedName.search(/\s/);
+					const firstname = spaceIdx === -1 ? trimmedName : trimmedName.slice(0, spaceIdx);
+					const lastname = spaceIdx === -1 ? "" : trimmedName.slice(spaceIdx).trim();
+
+					const user = await client.createUser({
+						email: customer,
+						firstname,
+						lastname,
+						roles: ["Customer"],
+					});
+					console.log(`${pc.green("✔")} Customer created (id ${user.id})`);
+					createdCustomerId = user.id;
+
+					ticket = await client.createTicket(ticketParams);
+				}
+
+				if (createdCustomerId === undefined) {
+					console.log(`${pc.green("✔")} Customer resolved (id ${ticket.customer_id})`);
+				}
 				console.log(`${pc.green("✔")} Ticket #${ticket.number} created (id ${ticket.id})`);
 				console.log(pc.dim(`  zammad tickets show ${ticket.id}`));
 			} catch (err) {
-				handleError(err);
+				const hint =
+					isCustomerLookupError(err) && !opts.createCustomer
+						? 'Pass --create-customer --customer-name "<name>" to create this customer.'
+						: undefined;
+				handleError(err, hint);
 			}
 		});
 }

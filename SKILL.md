@@ -89,11 +89,16 @@ zammad tickets create \
 
 # Override defaults
 zammad tickets create -t "T" -c customer@example.com -g Support -s open --type note --sender Agent -i "Internal draft"
+
+# Customer email unknown to Zammad: create the customer first
+zammad tickets create -t "T" -c newcustomer@example.com --create-customer --customer-name "Pascal Squale" "Message"
 ```
 
 Defaults match what the in-app support form produces: group `Users`, state
 `new`, article type `web`, sender `Customer`, publicly visible. The group name
 is not validated client-side, so a wrong `-g` returns a Zammad API error.
+An unknown customer email fails with a hint to pass `--create-customer` and
+`--customer-name`.
 
 Zammad's own trigger sends an auto-acknowledgement email to the customer, the
 same as for a form submission. The customer learns a ticket exists in their
