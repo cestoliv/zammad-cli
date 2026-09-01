@@ -32,7 +32,7 @@ Environment variables take precedence over stored config.
 | `zammad auth login` | Configure credentials interactively |
 | `zammad auth status` | Show current auth status |
 | `zammad auth logout` | Remove stored credentials |
-| `zammad tickets create` | Create a ticket for a customer (`-t`, `-c`) |
+| `zammad tickets create` | Create a ticket for a customer (`-t`, `-c`, `--create-customer`) |
 | `zammad tickets list` | List tickets (`-s open`, `-p 2`, `-n 10`) |
 | `zammad tickets search <query>` | Search with Elasticsearch syntax |
 | `zammad tickets show <id>` | Show ticket details and conversation |
@@ -72,6 +72,20 @@ zammad tickets create \
 Defaults match what the in-app support form produces: group `Users`, state
 `new`, article type `web`, sender `Customer`, publicly visible. Override any
 of them with `-g`, `-s`, `--type`, `--sender`, and `-i`.
+
+**Create a ticket for a customer that doesn't exist yet:**
+
+```bash
+zammad tickets create \
+  -t "[Exercise Request] Toe To Bar" \
+  -c newcustomer@example.com \
+  --create-customer \
+  --customer-name "Pascal Squale" \
+  "Bonjour, pouvez-vous ajouter l'exercice Toe To Bar ?"
+```
+
+Without `--create-customer`, an unknown email fails with a hint to add the
+flag.
 
 Zammad sends the customer its usual auto-acknowledgement email, so check the
 address before you run this.

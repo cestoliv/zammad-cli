@@ -1,6 +1,7 @@
 import type {
 	CreateArticleParams,
 	CreateTicketParams,
+	CreateUserParams,
 	UpdateTicketParams,
 	ZammadArticle,
 	ZammadConfig,
@@ -109,6 +110,13 @@ export class ZammadClient {
 	}
 
 	// ── Users & States ───────────────────────────────────────
+
+	async createUser(params: CreateUserParams): Promise<ZammadUser> {
+		return this.request<ZammadUser>("/api/v1/users", {
+			method: "POST",
+			body: JSON.stringify(params),
+		});
+	}
 
 	async getCurrentUser(): Promise<ZammadUser> {
 		return this.request<ZammadUser>("/api/v1/users/me");

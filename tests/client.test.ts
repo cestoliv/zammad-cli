@@ -93,6 +93,34 @@ describe("ZammadClient", () => {
 		});
 	});
 
+	describe("createUser", () => {
+		it("should POST to /api/v1/users", async () => {
+			const mockUser = { id: 42, email: "a@b.com", firstname: "Pascal", lastname: "Squale" };
+			mockResponse(mockUser);
+
+			const client = new ZammadClient(testConfig);
+			const result = await client.createUser({
+				email: "a@b.com",
+				firstname: "Pascal",
+				lastname: "Squale",
+				roles: ["Customer"],
+			});
+
+			expect(result.id).toBe(42);
+			const callUrl = fetchSpy.mock.calls[0][0] as string;
+			expect(callUrl).toContain("/api/v1/users");
+			const callOptions = fetchSpy.mock.calls[0][1] as RequestInit;
+			expect(callOptions.method).toBe("POST");
+			const parsedBody = JSON.parse(callOptions.body as string);
+			expect(parsedBody).toEqual({
+				email: "a@b.com",
+				firstname: "Pascal",
+				lastname: "Squale",
+				roles: ["Customer"],
+			});
+		});
+	});
+
 	describe("closeTicket", () => {
 		it("should PUT state:closed to /api/v1/tickets/{id}", async () => {
 			const mockTicket = { id: 5, state: "closed" };
